@@ -803,7 +803,7 @@ contract StabilizeToken is ERC20("Stabilize Token", "STBZ"), Ownable {
       }
     }
 
-    // Operator has initiated the burn to start
+    // Operator has initiated the per transaction burning
     function initiateBurn(uint256 rate) public onlyOwner returns (bool) {
       if(burnStarted == false){
         burnStarted = true;

@@ -11,6 +11,8 @@ interface IERC20 {
      * @dev Returns the amount of tokens in existence.
      */
     function totalSupply() external view returns (uint256);
+    
+    function decimals() external view returns (uint8);
 
     /**
      * @dev Returns the amount of tokens owned by `account`.
@@ -571,6 +573,7 @@ contract Operator is Ownable {
     uint256 private _periodFinished; // The UTC time that the current reward period ends
     uint256 public protocolStart; // UTC time that the protocol begins to reward tokens
     uint256 public lastOracleTime; // UTC time that oracle was last ran
+    uint256 constant minOracleRefresh = 21600; // The minimum amount of time we need to wait before refreshing the oracle prices
     uint256 private targetPrice = 1000000000000000000; // The target price for the stablecoins in USD
     StabilizeToken private StabilizeT; // A reference to the StabilizeToken
     StabilizePriceOracle private oracleContract; // A reference to the price oracle contract
@@ -593,7 +596,7 @@ contract Operator is Ownable {
     // Info of each user.
     struct UserInfo {
         uint256 amount; // How many LP/Stablecoin tokens the user has provided.
-        uint256 rewardDebt; // Reward debt. The amount of rewards already given to patient
+        uint256 rewardDebt; // Reward debt. The amount of rewards already given to depositer
         uint256 unclaimedReward; // Total reward potential
     }
 
@@ -612,11 +615,11 @@ contract Operator is Ownable {
     }
 
     // Info of each pool.
-    PoolInfo[] public totalPools;
+    PoolInfo[] private totalPools;
     // Info of each user that stakes LP tokens.
-    mapping(uint256 => mapping(address => UserInfo)) public userInfo;
-    // List of the active pools
-    PoolInfo[] public activePools;
+    mapping(uint256 => mapping(address => UserInfo)) private userInfo;
+    // List of the active pools IDs
+    uint256[] private activePools;
 
     // Events
     event RewardAdded(uint256 pid, uint256 reward);
@@ -628,9 +631,11 @@ contract Operator is Ownable {
 
     constructor(
         StabilizeToken _stabilize,
+        StabilizePriceOracle _oracle,
         uint256 startTime
     ) public {
         StabilizeT = _stabilize;
+        oracleContract = _oracle;
         protocolStart = startTime;
         setupEmissionSchedule(); // Publicize mint schedule
     }
@@ -681,20 +686,26 @@ contract Operator is Ownable {
                 _mintSchedule[_currentWeek-1] = _mintSchedule[_currentWeek-1].sub(devShare);
                 // Mint to the developer account
                 StabilizeT.mint(owner(),devShare); // The Operator will mint tokens to the developer
+            }else{
+                // This is the first week, let's activate all the pending pools
+                for(uint256 i = 0; i < totalPools.length; i++){
+                    activePools.push(totalPools[i].poolID);
+                    totalPools[i].active = true;
+                }             
             }
             rewardAmount = _mintSchedule[_currentWeek-1];
             if(_earlyBurnRate > 0){
                 // This will be utilized only if the contract has called for an early burn to reduce token supply
-                rewardAmount = rewardAmount - rewardAmount.mul(_earlyBurnRate).div(divisionFactor);
+                rewardAmount = rewardAmount.sub(rewardAmount.mul(_earlyBurnRate).div(divisionFactor));
             }
         }else{
             // Mint per emission schedule
             if(_currentWeek == 53){
                 // Start the burn rate
                 StabilizeT.initiateBurn(_burnRateLong);
+                // Set the maximum supply to the real total supply rate now
+                _maxSupplyFirstYear = StabilizeT.totalSupply();
             }
-            // Set the maximum supply to the real total supply rate ow
-            _maxSupplyFirstYear = StabilizeT.totalSupply();
             // No more devShare
             // Emission rate divided per week
             rewardAmount = _maxSupplyFirstYear.mul(_emissionRateLong).div(divisionFactor).div(52);
@@ -703,7 +714,7 @@ contract Operator is Ownable {
         // Now adjust the contract values
         _periodFinished = now + duration;
         weeklyReward = rewardAmount; // This is this week's distribution
-        lastOracleTime = now - 21600; // Force oracle price to update
+        lastOracleTime = now - minOracleRefresh; // Force oracle price to update
         rebalancePoolRewards(); // The pools will determine their reward rates based on the price
         emit NewWeek(_currentWeek,weeklyReward);
     }
@@ -720,13 +731,14 @@ contract Operator is Ownable {
         return _periodFinished;
     }
 
-    function poolLength() internal view returns (uint256) {
+    function poolLength() public view returns (uint256) {
         return totalPools.length;
     }
     
     function rebalancePoolRewards() public {
         // This function can only be called once every 6 hours, it updates all the active pools reward rates based on the prices
-        require(now >= lastOracleTime + 21600, "Cannot update the oracle prices now");
+        require(now >= lastOracleTime + minOracleRefresh, "Cannot update the oracle prices now");
+        require(_currentWeek > 0, "Protocol has not started yet");
         require(oracleContract != StabilizePriceOracle(address(0)),"No price oracle contract has been selected yet");
         lastOracleTime = now;
         uint256 rewardPerSecond = weeklyReward.div(duration);
@@ -746,24 +758,28 @@ contract Operator is Ownable {
         uint256 totalWeight = 0;
         uint256 i = 0;
         for(i = 0; i < length; i++){
-            if(activePools[i].lpPool == true){
-                activePools[i].poolWeight = 1;
+            if(totalPools[activePools[i]].lpPool == true){
+                totalPools[activePools[i]].poolWeight = 1;
                 totalWeight++;
             }else{
                 // Get the prices of the non LP pools
-                uint256 price = oracleContract.getPrice(address(activePools[i].sToken));
+                uint256 price = oracleContract.getPrice(address(totalPools[activePools[i]].sToken));
                 if(price > 0){
-                    activePools[i].price = price;
+                    totalPools[activePools[i]].price = price;
                 }
             }
         }
         // Now split the lpReward between the pools
         for(i = 0; i < length; i++){
-            if(activePools[i].lpPool == true){
-                uint256 rewardPercent = activePools[i].poolWeight.mul(divisionFactor).div(totalWeight);
+            if(totalPools[activePools[i]].lpPool == true){
+                uint256 rewardPercent = totalPools[activePools[i]].poolWeight.mul(divisionFactor).div(totalWeight);
                 uint256 poolReward = lpRewardLeft.mul(rewardPercent).div(divisionFactor);
-                forceUpdateRewardEarned(activePools[i].poolID,address(0)); // Update the stored rewards for this pool before changing the rates
-                activePools[i].rewardRate = poolReward.div(timeLeft); // The rate of return per second for this pool
+                forceUpdateRewardEarned(activePools[i],address(0)); // Update the stored rewards for this pool before changing the rates
+                if(timeLeft > 0){
+                    totalPools[activePools[i]].rewardRate = poolReward.div(timeLeft); // The rate of return per second for this pool
+                }else{
+                    totalPools[activePools[i]].rewardRate = 0;
+                }               
             }
         }
         
@@ -771,12 +787,12 @@ contract Operator is Ownable {
         totalWeight = 0;
         uint256 i2 = 0;
         for(i = 0; i < length; i++){
-            if(activePools[i].lpPool == false){
+            if(totalPools[activePools[i]].lpPool == false){
                 uint256 amountBelow = 0;
                 for(i2 = 0; i2 < length; i2++){
-                    if(activePools[i2].lpPool == false){
+                    if(totalPools[activePools[i2]].lpPool == false){
                         if(i != i2){ // Do not want to check itself
-                            if(activePools[i].price <= activePools[i2].price){
+                            if(totalPools[activePools[i]].price <= totalPools[activePools[i2]].price){
                                 amountBelow++;
                             }
                         }
@@ -786,8 +802,8 @@ contract Operator is Ownable {
                 uint256 weight = (1 + amountBelow) * 100000;
                 uint256 diff = 0;
                 // Now multiply or divide the weight by its distance from the target price
-                if(activePools[i].price > targetPrice){
-                    diff = activePools[i].price - targetPrice;
+                if(totalPools[activePools[i]].price > targetPrice){
+                    diff = totalPools[activePools[i]].price - targetPrice;
                     diff = diff.div(1e14); // Normalize the difference
                     uint256 weightReduction = diff.mul(50); // Weight is reduced for each $0.0001 above target price
                     if(weightReduction >= weight){
@@ -795,23 +811,27 @@ contract Operator is Ownable {
                     }else{
                         weight = weight.sub(weightReduction);
                     }
-                }else if(activePools[i].price < targetPrice){
-                    diff = targetPrice - activePools[i].price;
+                }else if(totalPools[activePools[i]].price < targetPrice){
+                    diff = targetPrice - totalPools[activePools[i]].price;
                     diff = diff.div(1e14); // Normalize the difference
                     uint256 weightGain = diff.mul(50); // Weight is added for each $0.0001 below target price
                     weight = weight.add(weightGain);      
                 }
-                activePools[i].poolWeight = weight;
+                totalPools[activePools[i]].poolWeight = weight;
                 totalWeight = totalWeight.add(weight);
             }
         }
         // Now split the sbReward among the stablecoin pools
         for(i = 0; i < length; i++){
-            if(activePools[i].lpPool == false){
-                uint256 rewardPercent = activePools[i].poolWeight.mul(divisionFactor).div(totalWeight);
+            if(totalPools[activePools[i]].lpPool == false){
+                uint256 rewardPercent = totalPools[activePools[i]].poolWeight.mul(divisionFactor).div(totalWeight);
                 uint256 poolReward = sbRewardLeft.mul(rewardPercent).div(divisionFactor);
-                forceUpdateRewardEarned(activePools[i].poolID,address(0)); // Update the stored rewards for this pool before changing the rates
-                activePools[i].rewardRate = poolReward.div(timeLeft); // The rate of return per second for this pool
+                forceUpdateRewardEarned(activePools[i],address(0)); // Update the stored rewards for this pool before changing the rates
+                if(timeLeft > 0){
+                    totalPools[activePools[i]].rewardRate = poolReward.div(timeLeft); // The rate of return per second for this pool
+                }else{
+                    totalPools[activePools[i]].rewardRate = 0;
+                }               
             }
         }
     }
@@ -830,6 +850,10 @@ contract Operator is Ownable {
     
     function poolSize(uint256 _pid) external view returns (uint256) {
         return totalPools[_pid].totalSupply;
+    }
+    
+    function poolBalance(uint256 _pid, address _address) external view returns (uint256) {
+        return userInfo[_pid][_address].amount;
     }
     
     function poolTokenAddress(uint256 _pid) external view returns (address) {
@@ -860,6 +884,9 @@ contract Operator is Ownable {
 
     function deposit(uint256 _pid, uint256 amount) public updateRewardEarned(_pid, _msgSender()) {
         require(amount > 0, "Cannot deposit 0");
+        if(_currentWeek > 0){
+            require(totalPools[_pid].active == true, "This pool is no longer active");
+        }      
         totalPools[_pid].totalSupply = totalPools[_pid].totalSupply.add(amount);
         userInfo[_pid][_msgSender()].amount = userInfo[_pid][_msgSender()].amount.add(amount);
         totalPools[_pid].sToken.safeTransferFrom(_msgSender(), address(this), amount);
@@ -876,8 +903,8 @@ contract Operator is Ownable {
     }
 
     // Normally used to exit the contract and claim reward tokens
-    function exit(uint256 _pid) external {
-        withdraw(_pid, userInfo[_pid][_msgSender()].amount);
+    function exit(uint256 _pid, uint256 _amount) external {
+        withdraw(_pid, _amount);
         getReward(_pid);
     }
 
@@ -942,7 +969,7 @@ contract Operator is Ownable {
     
     modifier timelockConditionsMet(uint256 _type) {
         require(_timelockType == _type, "Timelock not acquired for this function");
-        if(now >= protocolStart){
+        if(_currentWeek > 0){
             // Timelock is only required after the protocol starts
             require(now >= _timelockStart + _timelockDuration, "Timelock time not met");
         }
@@ -952,7 +979,6 @@ contract Operator is Ownable {
     // Due to no tokens existing, must mint some tokens to add into the initial liquidity pool 
     function bootstrapLiquidty() external onlyOwner {
         require(StabilizeT.totalSupply() == 0, "This token has already been bootstrapped");
-        require(_mintSchedule.length > 0);
         require(StabilizeT.owner() == address(this),"The Operator does not have permission to mint tokens");
         // Take dev amount from the first week mint schedule
         uint256 devAmount = _mintSchedule[0].mul(_rewardPercentDev).div(divisionFactor);
@@ -982,11 +1008,7 @@ contract Operator is Ownable {
     }
     
     function finishChangeEarlyBurnRate() external onlyOwner timelockConditionsMet(2) {
-        changeEarlyBurnRate(_timelock_data_1);
-    }
-    
-    function changeEarlyBurnRate(uint256 _percent) internal {
-       _earlyBurnRate = _percent;
+        _earlyBurnRate = _timelock_data_1;
     }
     // --------------------
     
@@ -999,11 +1021,7 @@ contract Operator is Ownable {
     }
     
     function finishChangeEarlyBurnRateLong() external onlyOwner timelockConditionsMet(3) {
-        changeBurnRateLong(_timelock_data_1);
-    }
-    
-    function changeBurnRateLong(uint256 _percent) internal {
-       _burnRateLong  = _percent;
+       _burnRateLong  = _timelock_data_1;
        if(_currentWeek >= 53){
            // Adjust the token's burn rate
            StabilizeT.initiateBurn(_burnRateLong);
@@ -1020,12 +1038,8 @@ contract Operator is Ownable {
     }
     
     function finishChangeEmissionRateLong() external onlyOwner timelockConditionsMet(4) {
-        changeEmissionRateLong(_timelock_data_1);
+        _emissionRateLong =_timelock_data_1;
     }
-    
-    function changeEmissionRateLong(uint256 _percent) internal {
-        _emissionRateLong = _percent;
-    }  
     // --------------------
 
     // Change the percent of rewards that is dedicated to LP providers
@@ -1037,11 +1051,7 @@ contract Operator is Ownable {
     }
     
     function finishChangeRewardPercentLP() external onlyOwner timelockConditionsMet(5) {
-        changeRewardPercentLP(_timelock_data_1);
-    }
-    
-    function changeRewardPercentLP(uint256 _percent) internal {
-        _rewardPercentLP = _percent;
+        _rewardPercentLP = _timelock_data_1;
     }
     // --------------------
 
@@ -1054,11 +1064,7 @@ contract Operator is Ownable {
     }
     
     function finishChangeTargetPrice() external onlyOwner timelockConditionsMet(6) {
-        changeTargetPrice(_timelock_data_1);
-    }
-    
-    function changeTargetPrice(uint256 _price) internal {
-        targetPrice = _price;
+        targetPrice = _timelock_data_1;
     }
     // --------------------
     
@@ -1071,11 +1077,7 @@ contract Operator is Ownable {
     }
     
     function finishChangePriceOracle() external onlyOwner timelockConditionsMet(7) {
-        changePriceOracle(StabilizePriceOracle(_timelock_address_1));
-    }
-    
-    function changePriceOracle(StabilizePriceOracle _oracle) internal {
-        oracleContract = _oracle;
+        oracleContract = StabilizePriceOracle(_timelock_address_1);
     }
     // --------------------
    
@@ -1086,19 +1088,18 @@ contract Operator is Ownable {
         _timelockType = 8;
         _timelock_address_1 = _address;
         _timelock_bool_1 = _lpPool;
+        if(_currentWeek == 0){
+            finishAddNewPool(); // Automatically add the pool if protocol hasn't started yet
+        }
     }
     
-    function finishAddNewPool() external onlyOwner timelockConditionsMet(8) {
-        addNewPool(IERC20(_timelock_address_1),_timelock_bool_1);
-    }
-    
-    function addNewPool(IERC20 _token, bool _lpPool) internal {
+    function finishAddNewPool() public onlyOwner timelockConditionsMet(8) {
         // This adds a new pool to the pool lists
         totalPools.push(
             PoolInfo({
-                sToken: _token,
+                sToken: IERC20(_timelock_address_1),
                 poolID: poolLength(),
-                lpPool: _lpPool,
+                lpPool: _timelock_bool_1,
                 rewardRate: 0,
                 poolWeight: 0,
                 price: 0,
@@ -1120,15 +1121,12 @@ contract Operator is Ownable {
     }
     
     function finishAddActivePool() external onlyOwner timelockConditionsMet(9) {
-        addActivePool(_timelock_data_1);
-    }
-    
-    function addActivePool(uint256 _pid) internal {
-        activePools.push(totalPools[_pid]);
-        totalPools[_pid].active = true;
+        require(totalPools[_timelock_data_1].active == false, "This pool is already active");
+        activePools.push(_timelock_data_1);
+        totalPools[_timelock_data_1].active = true;
         // Rebalance the pools now that there is a new pool
-        if(now >= protocolStart){
-            lastOracleTime = now - 21600; // Force oracle price to update
+        if(_currentWeek > 0){
+            lastOracleTime = now - minOracleRefresh; // Force oracle price to update
             rebalancePoolRewards();
         }
     }
@@ -1142,17 +1140,13 @@ contract Operator is Ownable {
         _timelock_data_1 = _pid;
     }
     
-    function finishRemoveActivePool() external onlyOwner timelockConditionsMet(10) {
-        removeActivePool(_timelock_data_1);
-    }
-    
-    function removeActivePool(uint256 _pid) internal updateRewardEarned(_pid, address(0)) {
+    function finishRemoveActivePool() external onlyOwner timelockConditionsMet(10) updateRewardEarned(_timelock_data_1, address(0)) {
         uint256 length = activePools.length;
         for(uint256 i = 0; i < length; i++){
-            if(activePools[i].poolID == _pid){
+            if(totalPools[activePools[i]].poolID == _timelock_data_1){
                 // Move all the remaining elements down one
-                activePools[i].active = false;
-                activePools[i].rewardRate = 0; // Deactivate rewards but first make sure to store current rewards
+                totalPools[activePools[i]].active = false;
+                totalPools[activePools[i]].rewardRate = 0; // Deactivate rewards but first make sure to store current rewards
                 for(uint256 i2 = i; i2 < length-1; i2++){
                     activePools[i2] = activePools[i2 + 1]; // Shift the data down one
                 }
@@ -1161,8 +1155,8 @@ contract Operator is Ownable {
             }
         }
         // Rebalance the remaining pools 
-        if(now >= protocolStart){
-            lastOracleTime = now - 21600; // Force oracle price to update
+        if(_currentWeek > 0){
+            lastOracleTime = now - minOracleRefresh; // Force oracle price to update
             rebalancePoolRewards();
         }
     }
