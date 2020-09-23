@@ -611,7 +611,7 @@ contract ERC20 is Context, IERC20 {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
-        _beforeTokenTransfer(sender, recipient, amount);
+        amount = _beforeTokenTransfer(sender, recipient, amount);
 
         _balances[sender] = _balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
         _balances[recipient] = _balances[recipient].add(amount);
@@ -699,7 +699,7 @@ contract ERC20 is Context, IERC20 {
      *
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual returns (uint256) { }
 }
 
 // File: @openzeppelin/contracts/access/Ownable.sol
@@ -793,14 +793,20 @@ contract StabilizeToken is ERC20("Stabilize Token", "STBZ"), Ownable {
     }
 
     // This function will burn a percentage of tokens not sent from the owner after 52 weeks are over
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override returns (uint256) {
       super._beforeTokenTransfer(from, to, amount); // Call parent hook
-      if(burnStarted == true){
+      if(burnStarted == true && burnRate > 0){
         if(from != owner()){
           // When the Operator is not transferring tokens, it is burned after 52 week
-          _burn(from,amount.mul(burnRate).div(divisionFactor));
+          uint256 burnAmount = amount.mul(burnRate).div(divisionFactor);
+          if(burnAmount.add(amount) > balanceOf(from)){
+              uint256 overage = burnAmount.add(amount).sub(balanceOf(from));
+              amount = amount.sub(overage); // Only subtract from the overage amount sent if user balance is not enough
+          }
+          _burn(from,burnAmount);
         }
       }
+      return amount;
     }
 
     // Operator has initiated the per transaction burning

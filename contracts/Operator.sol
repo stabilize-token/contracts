@@ -559,8 +559,8 @@ interface StabilizePriceOracle {
 pragma solidity ^0.6.0;
 
 // Operator is the controller of Stabilize Token, it can mint each week and controls the eventual 1% emission
-// Operator ownership cannot be changed once set, all controller modifications require a 24 hour timelock
-// Aave Price Oracles are used to update price data
+// Operator ownership of the Stabilize Token cannot be changed once set, all controller modifications require a 24 hour timelock
+// Aave & Chainlink Price Oracles are used to update price data
 // 
 contract Operator is Ownable {
     using SafeMath for uint256;
@@ -712,6 +712,11 @@ contract Operator is Ownable {
         }
         StabilizeT.mint(address(this),rewardAmount); // Mint at a set rate
         // Now adjust the contract values
+        // Force update all the active pools before we extend the period
+        for(uint256 i = 0; i < activePools.length; i++){
+            forceUpdateRewardEarned(activePools[i],address(0));
+            totalPools[activePools[i]].rewardRate = 0; // Set the reward rate to 0 until pools rebalanced
+        }
         _periodFinished = now + duration;
         weeklyReward = rewardAmount; // This is this week's distribution
         lastOracleTime = now - minOracleRefresh; // Force oracle price to update
@@ -909,8 +914,6 @@ contract Operator is Ownable {
     }
 
     /// A push mechanism for accounts that have not claimed their rewards for a long time.
-    /// The implementation is semantically analogous to getReward(), but uses a push pattern
-    /// instead of pull pattern.
     function pushReward(uint256 _pid, address recipient) external updateRewardEarned(_pid, recipient) onlyOwner {
         uint256 reward = rewardEarned(_pid,recipient);
         if (reward > 0) {
@@ -963,12 +966,12 @@ contract Operator is Ownable {
     
     // Reusable timelock variables
     uint256 private _timelock_data_1;
-    uint256 private _timelock_data_2;
     address private _timelock_address_1;
     bool private _timelock_bool_1;
     
     modifier timelockConditionsMet(uint256 _type) {
         require(_timelockType == _type, "Timelock not acquired for this function");
+        _timelockType = 0; // Reset the type once the timelock is used
         if(_currentWeek > 0){
             // Timelock is only required after the protocol starts
             require(now >= _timelockStart + _timelockDuration, "Timelock time not met");
@@ -986,7 +989,7 @@ contract Operator is Ownable {
         StabilizeT.mint(owner(),devAmount); // The Operator will mint tokens to the developer
     }
     
-    // Change the owner of the contractBalance
+    // Change the owner of the Operator contract
     // --------------------
     function startOwnerChange(address _address) external onlyOwner {
         _timelockStart = now;
@@ -1020,7 +1023,7 @@ contract Operator is Ownable {
         _timelock_data_1 = _percent;
     }
     
-    function finishChangeEarlyBurnRateLong() external onlyOwner timelockConditionsMet(3) {
+    function finishChangeBurnRateLong() external onlyOwner timelockConditionsMet(3) {
        _burnRateLong  = _timelock_data_1;
        if(_currentWeek >= 53){
            // Adjust the token's burn rate
