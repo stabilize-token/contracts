@@ -2,7 +2,7 @@
 Protocol that promotes stablecoins to stay on their peg with reward incentives. Stablecoins do not need to be tied to liquidity pools therefore limiting IL risk.
 
 ## Find the contracts at:
-Price Oracle: https://etherscan.io/address/0xB54e7175db55D0Effcc974f146b3714910907A58
+Price Oracle: https://etherscan.io/address/0xB80841D5875C0ee45998727dCc0E6aE2541DB45E
 
 Token: https://etherscan.io/address/0xb987d48ed8f2c468d52d6405624eadba5e76d723
 
