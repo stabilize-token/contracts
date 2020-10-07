@@ -2,9 +2,9 @@
 // This contract uses Aave Price Oracle
 // The main Operator contract can change which Price Oracle it uses
 
-// Gas used for creation: 172,963 gas
+// Updated to use Chainlink upgrade
 
-pragma solidity ^0.6.0;
+pragma solidity ^0.6.6;
 
 /************
 IPriceOracleGetter interface
@@ -21,8 +21,13 @@ interface LendingPoolAddressesProvider {
     function getPriceOracle() external view returns (address);
 }
 
-interface Aggregator {
-    function latestAnswer() external view returns (int256);
+interface AggregatorV3Interface {
+  function latestRoundData() external view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound);
+}
+
+interface zaToken {
+    // For the proxy tokens
+    function underlyingAsset() external view returns (address);
 }
 
 contract StabilizePriceOracle {
@@ -30,15 +35,29 @@ contract StabilizePriceOracle {
         // This version of the price oracle will use Aave contracts
         
         // First get the Ethereum USD price from Chainlink Aggregator
-        Aggregator ethOracle = Aggregator(address(0xF79D6aFBb6dA890132F9D7c355e3015f15F3406F)); // Mainlink oracle address
-        uint256 ethPrice = uint256(ethOracle.latestAnswer());
+        // Mainnet address: 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419
+        // Kovan address: 0x9326BFA02ADD2366b30bacB125260Af641031331
+        AggregatorV3Interface ethOracle = AggregatorV3Interface(address(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419));
+        ( , int intEthPrice, , , ) = ethOracle.latestRoundData(); // We only want the answer 
+        uint256 ethPrice = uint256(intEthPrice);
+        
+        address underlyingAsset;
+        // zaTokens store their underlying asset address in the contract
+        try zaToken(_address).underlyingAsset() returns (address) {
+            // If this address has that method, this will work
+            underlyingAsset = zaToken(_address).underlyingAsset();
+        }catch{
+            underlyingAsset = _address;
+        }
         
         // Retrieve PriceOracle address
-        LendingPoolAddressesProvider provider = LendingPoolAddressesProvider(address(0x24a42fD28C976A61Df5D00D0599C34c4f90748c8)); // mainnet address, for other addresses: https://docs.aave.com/developers/developing-on-aave/deployed-contract-instances
+        // Mainnet address: 0x24a42fD28C976A61Df5D00D0599C34c4f90748c8
+        // Kovan address: 0x506B0B2CF20FAA8f38a4E2B524EE43e1f4458Cc5
+        LendingPoolAddressesProvider provider = LendingPoolAddressesProvider(address(0x24a42fD28C976A61Df5D00D0599C34c4f90748c8));
         address priceOracleAddress = provider.getPriceOracle();
         IPriceOracleGetter priceOracle = IPriceOracleGetter(priceOracleAddress);
 
-        uint256 price = priceOracle.getAssetPrice(_address); // This is relative to Ethereum, need to convert to USD
+        uint256 price = priceOracle.getAssetPrice(underlyingAsset); // This is relative to Ethereum, need to convert to USD
         ethPrice = ethPrice / 10000; // We only care about 4 decimal places from Chainlink priceOracleAddress
         price = price * ethPrice / 10000; // Convert to Wei format
         return price;
