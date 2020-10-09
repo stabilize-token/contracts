@@ -926,6 +926,11 @@ contract zaToken is ERC20("Stabilize Proxy Aave USDC Token", "za-USDC"), Ownable
         require(movedBalance >= withdrawAmount, "Aave failed to properly move the entire amount"); // Should be equal at least
         
         // Pay fee upon withdrawing
+        if(userInfo[_msgSender()].depositTime == 0){
+            // The user has never deposited here
+            userInfo[_msgSender()].depositTime = now; // Give them the max fee
+        }
+        
         uint256 feeSubtraction = initialFee.sub(endFee).mul(now.sub(userInfo[_msgSender()].depositTime)).div(feeDuration);
         if(feeSubtraction > initialFee.sub(endFee)){
             // Cannot reduce fee more than this
