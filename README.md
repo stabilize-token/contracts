@@ -10,4 +10,4 @@ Operator: https://etherscan.io/address/0xEe9156C93ebB836513968F92B4A67721f3cEa08
 
 Treasury: https://etherscan.io/address/0x42Cbe17335ef8d52F8d1e0a261eA2e78E829C56e
 
-za-USDC: https://etherscan.io/address/0x8d600F091fae664B1c4Daa3A341737e976426920
+za-USDC: https://etherscan.io/address/0x1D107B258a2BA3a87B301e635dDc336cfDDe153b
