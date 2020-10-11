@@ -1,6 +1,7 @@
 // Price Oracle for Stabilize Protocol
 // This contract uses Aave Price Oracle
 // The main Operator contract can change which Price Oracle it uses
+// Modified to accomodate proxy usage
 
 // Updated to use Chainlink upgrade
 
@@ -31,7 +32,58 @@ interface zaToken {
 }
 
 contract StabilizePriceOracle {
-    function getPrice(address _address) external view returns (uint256) {
+    
+    // List of custom tokens
+    address[] public zTokenList;
+    address public owner;
+    
+    constructor() public {
+        owner = msg.sender;
+        insertCustomTokens(); // zTokens have underlying asset
+    }
+    
+    modifier onlyGovernance() {
+        require(owner == msg.sender, "Ownable: caller is not the owner");
+        _;
+    }
+
+    function insertCustomTokens() internal {
+        // Mainnet zaToken
+        zTokenList.push(address(0x1D107B258a2BA3a87B301e635dDc336cfDDe153b));
+        
+        // Testnet zaToken
+        // zTokenList.push(address(0x6d50e2CF85E231A3560bcFbB8f99Ed1424d21415));
+    }
+    
+    function addNewCustomToken(address _address) external onlyGovernance {
+        zTokenList.push(address(_address));
+    }
+    
+    function removeCustomToken(address _address) external onlyGovernance {
+        uint256 length = zTokenList.length;
+        for(uint256 i = 0; i < length; i++){
+            if(zTokenList[i] == _address){
+                // Move all the remaining elements down one
+                for(uint256 i2 = i; i2 < length-1; i2++){
+                    zTokenList[i2] = zTokenList[i2 + 1]; // Shift the data down one
+                }
+                zTokenList.pop(); //Remove last element
+                break;
+            }
+        }
+    }
+    
+    function isZToken(address _address) internal view returns (bool) {
+        uint256 length = zTokenList.length;
+        for(uint256 i = 0; i < length; i++){
+            if(_address == zTokenList[i]){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    function getPrice(address _address) public view returns (uint256) {
         // This version of the price oracle will use Aave contracts
         
         // First get the Ethereum USD price from Chainlink Aggregator
@@ -41,13 +93,10 @@ contract StabilizePriceOracle {
         ( , int intEthPrice, , , ) = ethOracle.latestRoundData(); // We only want the answer 
         uint256 ethPrice = uint256(intEthPrice);
         
-        address underlyingAsset;
-        // zaTokens store their underlying asset address in the contract
-        try zaToken(_address).underlyingAsset() returns (address) {
-            // If this address has that method, this will work
+        address underlyingAsset = _address;
+        if(isZToken(_address) == true){
+            // zaTokens store their underlying asset address in the contract
             underlyingAsset = zaToken(_address).underlyingAsset();
-        }catch{
-            underlyingAsset = _address;
         }
         
         // Retrieve PriceOracle address
@@ -62,4 +111,5 @@ contract StabilizePriceOracle {
         price = price * ethPrice / 10000; // Convert to Wei format
         return price;
     }
+
 }
