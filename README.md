@@ -14,7 +14,7 @@ STBZ Staking Pool: https://etherscan.io/address/0x8c17bE13e034f7fa2a6496bC83B601
 
 StabilizeTornadoProxyV2: https://etherscan.io/address/0xcA4530692F73110e5E15E2D07049bcFd5Adbe0de
 
-## Savings Contracts
+### Savings Contracts
 
 za-USDC: https://etherscan.io/address/0x1D107B258a2BA3a87B301e635dDc336cfDDe153b
 
@@ -24,7 +24,7 @@ za-DAI: https://etherscan.io/address/0x38ea93D59cc7B83DA7847E9a22eACDDc0751Af77
 
 za-sUSD: https://etherscan.io/address/0x2f81fcd5222e0F183Dc2F70d55f4c84fcB59BF4C
 
-## Strategy Contracts
+### Strategy Contracts
 
 zs-ETHUSDT: https://etherscan.io/address/0x5721f00507DCF54174b8Ac450d60Da3e7aA1f2Dc
 
