@@ -30,5 +30,9 @@ zs-ETHUSDT: https://etherscan.io/address/0x5721f00507DCF54174b8Ac450d60Da3e7aA1f
 
 zs-ETHUSDT Strategy: https://etherscan.io/address/0x213Ae7635B72f8EA094b22A35dfF983f86330D59
 
+zs-DAI: https://etherscan.io/address/0x2212F60BC949cF09a8BCCcA29038014094A70231
+
+zs-DAI Strategy: https://etherscan.io/address/0x2F086cDef0Cc7128A48D954B25Fb733Ca5eB57dE
+
 ## Read our Medium:
 Medium: https://medium.com/@stabilize
