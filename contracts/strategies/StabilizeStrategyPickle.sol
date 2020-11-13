@@ -694,18 +694,6 @@ contract StabilizeStrategyPickleV1 is Ownable {
          // Now withdraw the pLP from Pickle Farm
         PickleFarm(pFarmAddress).withdraw(pTokenID, pTokenAmount); // This function also returns Pickle earned
         
-        // Update user balance
-        if(_depositor != zsTokenAddress){
-            if(pTokenAmount >= userInfo[_depositor].balanceEstimate){
-                userInfo[_depositor].balanceEstimate = 0;
-            }else{
-                userInfo[_depositor].balanceEstimate = userInfo[_depositor].balanceEstimate.sub(pTokenAmount);
-            }
-            if(_takeAll == true){
-                userInfo[_depositor].balanceEstimate = 0;
-            }
-        }
-        
         // Now exchange the pJar token for the LP token
         IERC20 _lpToken = IERC20(rewardTokenList[0]);
         uint256 lpWithdrawAmount = 0;
@@ -721,6 +709,18 @@ contract StabilizeStrategyPickleV1 is Ownable {
 
         // Transfer the accessory tokens
         transferAccessoryTokens(_depositor, _share, _total);
+
+        // Update user balance
+        if(_depositor != zsTokenAddress){
+            if(pTokenAmount >= userInfo[_depositor].balanceEstimate){
+                userInfo[_depositor].balanceEstimate = 0;
+            }else{
+                userInfo[_depositor].balanceEstimate = userInfo[_depositor].balanceEstimate.sub(pTokenAmount);
+            }
+            if(_takeAll == true){
+                userInfo[_depositor].balanceEstimate = 0;
+            }
+        }
         
         // Now we withdraw the LP to the user
         _lpToken.safeTransfer(_depositor, lpWithdrawAmount);
@@ -842,6 +842,10 @@ contract StabilizeStrategyPickleV1 is Ownable {
             weightedAverageDepositTime = userInfo[_depositor].depositTime.mul(_pBalance)
                                         .div(_pBalance.add(_totalBalancePTokens))
                                         .add(weightedAverageDepositTime);
+        }else{
+            if(weightedAverageDepositTime == 0){
+                weightedAverageDepositTime = now;
+            }
         }
         
         // Now deposit these tokens into the farm contract
