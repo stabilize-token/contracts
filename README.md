@@ -26,11 +26,11 @@ za-sUSD: https://etherscan.io/address/0x2f81fcd5222e0F183Dc2F70d55f4c84fcB59BF4C
 
 ### Strategy Contracts
 
+
+### Retired Contracts
 zs-DAI: https://etherscan.io/address/0x2212F60BC949cF09a8BCCcA29038014094A70231
 
 zs-DAI Strategy: https://etherscan.io/address/0x54947A5908cc6307a2A120271662f797D3cCbB22
-
-### Retired Contracts
 
 zs-ETHUSDT: https://etherscan.io/address/0x5721f00507DCF54174b8Ac450d60Da3e7aA1f2Dc
 
