@@ -24,7 +24,9 @@ zpa-DAI: https://etherscan.io/address/0xfa8c04d342FBe24d871ea77807b1b93eC42A57ea
 zpa-sUSD: https://etherscan.io/address/0x89Cc19cece29acbD41F931F3dD61A10C1627E4c4
 
 ### Strategy Contracts
+zs-USD: https://etherscan.io/address/0x8e769EAA31375D13a1247dE1e64987c28Bed987E
 
+zs-USD Strategy: https://etherscan.io/address/0x1B73bcFec213E7748454E1Ec6C4FD9D6E8cf9754
 
 ### Retired Contracts
 zs-DAI: https://etherscan.io/address/0x2212F60BC949cF09a8BCCcA29038014094A70231
