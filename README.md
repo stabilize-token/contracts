@@ -28,6 +28,10 @@ zs-USD: https://etherscan.io/address/0x8e769EAA31375D13a1247dE1e64987c28Bed987E
 
 zs-USD Strategy: https://etherscan.io/address/0x1B73bcFec213E7748454E1Ec6C4FD9D6E8cf9754
 
+zs-BTC: https://etherscan.io/address/0x739D93f2b116E6aD754e173655c635Bd5D8d664c
+
+zs-BTC Strategy: https://etherscan.io/address/0xd378DeD41c41CcA22B111495D88F5856F35eA795
+
 ### Retired Contracts
 zs-DAI: https://etherscan.io/address/0x2212F60BC949cF09a8BCCcA29038014094A70231
 
