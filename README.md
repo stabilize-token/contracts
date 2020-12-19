@@ -26,13 +26,15 @@ zpa-sUSD: https://etherscan.io/address/0x89Cc19cece29acbD41F931F3dD61A10C1627E4c
 ### Strategy Contracts
 zs-USD: https://etherscan.io/address/0x8e769EAA31375D13a1247dE1e64987c28Bed987E
 
-zs-USD Strategy: https://etherscan.io/address/0x1B73bcFec213E7748454E1Ec6C4FD9D6E8cf9754
+zs-USD StrategyV2: https://etherscan.io/address/0x709Ab96e74f77629C7F7108a26831Af4C919102b
 
 zs-BTC: https://etherscan.io/address/0x739D93f2b116E6aD754e173655c635Bd5D8d664c
 
 zs-BTC Strategy: https://etherscan.io/address/0xd378DeD41c41CcA22B111495D88F5856F35eA795
 
 ### Retired Contracts
+zs-USD StrategyV1: https://etherscan.io/address/0x1B73bcFec213E7748454E1Ec6C4FD9D6E8cf9754
+
 zs-DAI: https://etherscan.io/address/0x2212F60BC949cF09a8BCCcA29038014094A70231
 
 zs-DAI Strategy: https://etherscan.io/address/0x54947A5908cc6307a2A120271662f797D3cCbB22
