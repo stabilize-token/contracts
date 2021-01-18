@@ -32,7 +32,7 @@ zs-USD StrategyV2: https://etherscan.io/address/0x709Ab96e74f77629C7F7108a26831A
 
 zs-BTC: https://etherscan.io/address/0x739D93f2b116E6aD754e173655c635Bd5D8d664c
 
-zs-BTC StrategyV2: https://etherscan.io/address/0x524FcAA13764F30A121e042B420Be956A5891256
+zs-BTC StrategyV3: https://etherscan.io/address/0x9a86b5a9224243039e057bd2f837a150fde3f45c
 
 zs-SGR: https://etherscan.io/address/0xfea2468C55E80aB9487f6E6189C79Ce31E1f9Ea7
 
@@ -46,6 +46,8 @@ zs-BMSGR Strategy: https://etherscan.io/address/0xdA810f3dC383072CaE90b4420bbB0a
 zs-SGR StrategyV1: https://etherscan.io/address/0xD4b3F9ba5c576375ad48d7a75Eb4b40A7c6AcA63
 
 zs-BTC StrategyV1: https://etherscan.io/address/0xd378DeD41c41CcA22B111495D88F5856F35eA795
+
+zs-BTC StrategyV2: https://etherscan.io/address/0x524FcAA13764F30A121e042B420Be956A5891256
 
 zs-USD StrategyV1: https://etherscan.io/address/0x1B73bcFec213E7748454E1Ec6C4FD9D6E8cf9754
 
