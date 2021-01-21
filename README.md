@@ -2,7 +2,7 @@
 Protocol that promotes stablecoins to stay on their peg with reward incentives. Stablecoins do not need to be tied to liquidity pools therefore limiting IL risk. Stabilize now features pools that earn interest on underlying assets.
 
 ## Find the contracts at:
-Price Oracle: https://etherscan.io/address/0x1D860544fCcc1defc82F680122EE6aA5e0B5b438
+Price Oracle: https://etherscan.io/address/0x81A363F3C747dbE947b43486Db4C6AA4DC70DDc4
 
 STBZ Token: https://etherscan.io/address/0xb987d48ed8f2c468d52d6405624eadba5e76d723
 
