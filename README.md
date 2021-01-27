@@ -36,13 +36,15 @@ zs-BTC StrategyV4: https://etherscan.io/address/0x86FeDcc299d2E04264b168c37f18b7
 
 zs-SGR: https://etherscan.io/address/0xfea2468C55E80aB9487f6E6189C79Ce31E1f9Ea7
 
-zs-SGR StrategyV2: https://etherscan.io/address/0x4CAcAD7f3D66a24bD65B1bF897BD35A425e2caC6
+zs-SGR StrategyV3: https://etherscan.io/address/0xb3B7D98153272E0B5FFe7022B3B43571e4605edb
 
 zs-BMSGR: https://etherscan.io/address/0x939D73E26138f4B483368F96d17D2B4dCc5bc84f
 
 zs-BMSGR Strategy: https://etherscan.io/address/0xdA810f3dC383072CaE90b4420bbB0a044C812C20
 
 ### Retired Contracts
+zs-SGR StrategyV2: https://etherscan.io/address/0x4CAcAD7f3D66a24bD65B1bF897BD35A425e2caC6
+
 zs-BTC StrategyV3: https://etherscan.io/address/0x9a86b5a9224243039e057bd2f837a150fde3f45c
 
 zs-SGR StrategyV1: https://etherscan.io/address/0xD4b3F9ba5c576375ad48d7a75Eb4b40A7c6AcA63
