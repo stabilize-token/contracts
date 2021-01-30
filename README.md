@@ -42,6 +42,10 @@ zs-BMSGR: https://etherscan.io/address/0x939D73E26138f4B483368F96d17D2B4dCc5bc84
 
 zs-BMSGR Strategy: https://etherscan.io/address/0xdA810f3dC383072CaE90b4420bbB0a044C812C20
 
+zs-FRAX: https://etherscan.io/address/0xD469BB16116443F389EfEF407D73EF7Ab0Ad96Ce
+
+zs-FRAX Strategy: https://etherscan.io/address/0x60953d814e81Bff9b5c8E9DF21Fb007892951295
+
 ### Retired Contracts
 zs-SGR StrategyV2: https://etherscan.io/address/0x4CAcAD7f3D66a24bD65B1bF897BD35A425e2caC6
 
