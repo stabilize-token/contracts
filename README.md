@@ -38,7 +38,7 @@ zs-BTC StrategyV4: https://etherscan.io/address/0x86FeDcc299d2E04264b168c37f18b7
 
 zs-SGR: https://etherscan.io/address/0xfea2468C55E80aB9487f6E6189C79Ce31E1f9Ea7
 
-zs-SGR StrategyV3: https://etherscan.io/address/0xb3B7D98153272E0B5FFe7022B3B43571e4605edb
+zs-SGR StrategyV4: https://etherscan.io/address/0xC2DA2859901fdB615Ebf4449983b96BECa238c57
 
 zs-BMSGR: https://etherscan.io/address/0x939D73E26138f4B483368F96d17D2B4dCc5bc84f
 
