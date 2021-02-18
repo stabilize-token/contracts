@@ -18,15 +18,6 @@ STBZ Staking Pool: https://etherscan.io/address/0x8c17bE13e034f7fa2a6496bC83B601
 
 StabilizeTornadoProxyV2: https://etherscan.io/address/0xcA4530692F73110e5E15E2D07049bcFd5Adbe0de
 
-### Savings Contracts
-zpa-USDC: https://etherscan.io/address/0x4dEaD8338cF5cb31122859b2Aec2b60416D491f0
-
-zpa-USDT: https://etherscan.io/address/0x6B2e59b8EbE61B5ee0EF30021b7740C63F597654
-
-zpa-DAI: https://etherscan.io/address/0xfa8c04d342FBe24d871ea77807b1b93eC42A57ea
-
-zpa-sUSD: https://etherscan.io/address/0x89Cc19cece29acbD41F931F3dD61A10C1627E4c4
-
 ### Strategy Contracts
 zs-USD: https://etherscan.io/address/0x8e769EAA31375D13a1247dE1e64987c28Bed987E
 
@@ -49,6 +40,14 @@ zs-FRAX: https://etherscan.io/address/0xD469BB16116443F389EfEF407D73EF7Ab0Ad96Ce
 zs-FRAX Strategy: https://etherscan.io/address/0x60953d814e81Bff9b5c8E9DF21Fb007892951295
 
 ### Retired Contracts
+zpa-USDC: https://etherscan.io/address/0x4dEaD8338cF5cb31122859b2Aec2b60416D491f0
+
+zpa-USDT: https://etherscan.io/address/0x6B2e59b8EbE61B5ee0EF30021b7740C63F597654
+
+zpa-DAI: https://etherscan.io/address/0xfa8c04d342FBe24d871ea77807b1b93eC42A57ea
+
+zpa-sUSD: https://etherscan.io/address/0x89Cc19cece29acbD41F931F3dD61A10C1627E4c4
+
 zs-SGR StrategyV2: https://etherscan.io/address/0x4CAcAD7f3D66a24bD65B1bF897BD35A425e2caC6
 
 zs-BTC StrategyV3: https://etherscan.io/address/0x9a86b5a9224243039e057bd2f837a150fde3f45c
