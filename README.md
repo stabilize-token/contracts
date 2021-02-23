@@ -31,15 +31,15 @@ zs-SGR: https://etherscan.io/address/0xfea2468C55E80aB9487f6E6189C79Ce31E1f9Ea7
 
 zs-SGR StrategyV4: https://etherscan.io/address/0xC2DA2859901fdB615Ebf4449983b96BECa238c57
 
-zs-BMSGR: https://etherscan.io/address/0x939D73E26138f4B483368F96d17D2B4dCc5bc84f
-
-zs-BMSGR Strategy: https://etherscan.io/address/0xdA810f3dC383072CaE90b4420bbB0a044C812C20
-
 zs-FRAX: https://etherscan.io/address/0xD469BB16116443F389EfEF407D73EF7Ab0Ad96Ce
 
 zs-FRAX Strategy: https://etherscan.io/address/0x60953d814e81Bff9b5c8E9DF21Fb007892951295
 
 ### Retired Contracts
+zs-BMSGR: https://etherscan.io/address/0x939D73E26138f4B483368F96d17D2B4dCc5bc84f
+
+zs-BMSGR Strategy: https://etherscan.io/address/0xdA810f3dC383072CaE90b4420bbB0a044C812C20
+
 zpa-USDC: https://etherscan.io/address/0x4dEaD8338cF5cb31122859b2Aec2b60416D491f0
 
 zpa-USDT: https://etherscan.io/address/0x6B2e59b8EbE61B5ee0EF30021b7740C63F597654
