@@ -1236,7 +1236,7 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
             interestGain = calculateAndViewInterest(); // Will return total gain (normalized)
             StrategyVault vault = StrategyVault(strategyVaultAddress);
             // The first param is used to determine if interest earned will bring it over threshold
-            interestGain = interestGain.add(vault.viewWETHProfit(interestGain)); // Will return profit as WETH
+            interestGain = vault.viewWETHProfit(interestGain); // Will return profit as WETH
         }
 
         // Now find our target token to sell into
@@ -1404,9 +1404,7 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
     
     function startChangeTradingConditions(uint256 _pTradeTrigger, uint256 _pSellPercent,  uint256 _minSplit, uint256 _maxStipend, uint256 _pMaxStipend) external onlyGovernance {
         // Changes a lot of trading parameters in one call
-        require(_pTradeTrigger <= 100000,"Percent cannot be greater than 100%");
-        require(_pSellPercent <= 100000,"Percent cannot be greater than 100%");
-        require(_pMaxStipend <= 100000,"Percent cannot be greater than 100%");
+        require(_pTradeTrigger <= 100000 && _pSellPercent <= 100000 && _pMaxStipend <= 100000,"Percent cannot be greater than 100%");
         _timelockStart = now;
         _timelockType = 6;
         _timelock_data[0] = _pTradeTrigger;
@@ -1431,9 +1429,7 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
     
     function startChangeStrategyAllocations(uint256 _pDepositors, uint256 _pExecutor, uint256 _pStakers) external onlyGovernance {
         // Changes strategy allocations in one call
-        require(_pDepositors <= 100000,"Percent cannot be greater than 100%");
-        require(_pExecutor <= 100000,"Percent cannot be greater than 100%");
-        require(_pStakers <= 100000,"Percent cannot be greater than 100%");
+        require(_pDepositors <= 100000 && _pExecutor <= 100000 && _pStakers <= 100000,"Percent cannot be greater than 100%");
         _timelockStart = now;
         _timelockType = 7;
         _timelock_data[0] = _pDepositors;
