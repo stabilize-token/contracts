@@ -602,6 +602,7 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
 
     uint256 public lastTradeTime;
     uint256 public lastActionBalance; // Balance before last deposit, withdraw or trade
+    bool public daiOpenTrade = true; // If true, dai can trade openly with other tokens other than susd
     uint256 public percentTradeTrigger = 90000; // 90% change in value will trigger a trade
     uint256 public percentSell = 50000; // 50% of the tokens are sold to the cheapest token
     uint256 public percentDepositor = 50000; // 1000 = 1%, depositors earn 50% of all gains (including interest)
@@ -885,7 +886,7 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
                     _withdrawAmount = _withdrawAmount.sub(_normalizedBalance);
                     _balance = tokenList[targetID].aToken.balanceOf(address(this));
                     convertFromAToken(targetID, _balance);
-                    tokenList[i].lastATokenBalance = tokenList[i].aToken.balanceOf(address(this));
+                    tokenList[targetID].lastATokenBalance = tokenList[targetID].aToken.balanceOf(address(this));
                     tokenList[targetID].token.safeTransfer(_receiver, _balance);                    
                 }
             }else{
@@ -895,7 +896,7 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
                     _balance = _withdrawAmount.mul(10**tokenList[targetID].decimals).div(1e18);
                     _withdrawAmount = 0;
                     convertFromAToken(targetID, _balance);
-                    tokenList[i].lastATokenBalance = tokenList[i].aToken.balanceOf(address(this));
+                    tokenList[targetID].lastATokenBalance = tokenList[targetID].aToken.balanceOf(address(this));
                     tokenList[targetID].token.safeTransfer(_receiver, _balance);
                 }
                 break; // Nothing more to withdraw
@@ -1134,7 +1135,9 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
             if(i != targetID){
                 uint256 localTarget = targetID;
                 if(i == 0){
-                    localTarget = 3; // aDAI will only sell for aSUSD as they switch often
+                    if(daiOpenTrade == false){ // If governance prevents dai from trading for usdc and usdt
+                        localTarget = 3; // aDAI will only sell for aSUSD as they switch often
+                    }
                 }else if(i == 3){
                     localTarget = 0; // aSUSD will only sell for aDAI
                 }else{
@@ -1231,9 +1234,8 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
     function expectedProfit(bool inWETHForExecutor) external view returns (uint256) {
         // This view will return the expected profit in wei units that a trading activity will have on the pool
         
-        uint256 interestGain = 0;
+        uint256 interestGain = calculateAndViewInterest(); // Will return total gain (normalized)
         if(inWETHForExecutor == true){
-            interestGain = calculateAndViewInterest(); // Will return total gain (normalized)
             StrategyVault vault = StrategyVault(strategyVaultAddress);
             // The first param is used to determine if interest earned will bring it over threshold
             interestGain = vault.viewWETHProfit(interestGain); // Will return profit as WETH
@@ -1249,7 +1251,9 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
             if(i != targetID){
                 uint256 localTarget = targetID;
                 if(i == 0){
-                    localTarget = 3; // aDAI will only sell for aSUSD as they switch often
+                    if(daiOpenTrade == false){
+                        localTarget = 3; // aDAI will only sell for aSUSD as they switch often
+                    }
                 }else if(i == 3){
                     localTarget = 0; // aSUSD will only sell for aDAI
                 }else{
@@ -1313,6 +1317,15 @@ contract StabilizeStrategyStablecoinArbV3 is Ownable {
         // This is function that force trade tokens at anytime. It can only be called by governance
         checkAndSwapTokens(_msgSender());
         lastActionBalance = balance();
+    }
+    
+    function governanceToggleDaiTrade() external onlyGovernance {
+        // Governance can open or close dai open trade
+        if(daiOpenTrade == false){
+            daiOpenTrade = true;
+        }else{
+            daiOpenTrade = false;
+        }
     }
     
     // Timelock variables
