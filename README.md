@@ -21,7 +21,9 @@ StabilizeTornadoProxyV2: https://etherscan.io/address/0xcA4530692F73110e5E15E2D0
 ### Strategy Contracts
 zs-USD: https://etherscan.io/address/0x8e769EAA31375D13a1247dE1e64987c28Bed987E
 
-zs-USD StrategyV2: https://etherscan.io/address/0x709Ab96e74f77629C7F7108a26831Af4C919102b
+zs-USD StrategyV3: https://etherscan.io/address/0x49b378d8bb46473696fbd0f6e3e38dd919915b16
+
+zs-USD InterestVault: https://etherscan.io/address/0x8319006f50D11C9400E7C446c9F8192a6c27da6e
 
 zs-BTC: https://etherscan.io/address/0x739D93f2b116E6aD754e173655c635Bd5D8d664c
 
