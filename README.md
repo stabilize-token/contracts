@@ -10,6 +10,8 @@ STBZ Token: https://etherscan.io/address/0xb987d48ed8f2c468d52d6405624eadba5e76d
 
 Operator: https://etherscan.io/address/0xEe9156C93ebB836513968F92B4A67721f3cEa08a
 
+Pool Rebalancer: https://etherscan.io/address/0x2F7b01d71bD2b8c3CcAA47d29CB4C504dC755b96
+
 Treasury Furnace: https://etherscan.io/address/0x42Cbe17335ef8d52F8d1e0a261eA2e78E829C56e
 
 Gas Treasury: https://etherscan.io/address/0xE05D2A6b97dce9B8e59ad074c2E4b6D51a24aAe3
