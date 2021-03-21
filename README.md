@@ -43,6 +43,10 @@ zs-ETH: https://etherscan.io/address/0x93B97BBb3F65EC39ea6041bF92FA998e5434E858
 
 zs-ETH StrategyV2: https://etherscan.io/address/0x6761202163364bc4f7C3816Bef46695930536A3b 
 
+zs-XUSD: https://etherscan.io/address/0xc79376E4E60c4f83c933e0E0cD5B87Fb1c9848F7
+
+zs-XUSD Strategy: https://etherscan.io/address/0xC6F08d6cB8dA01Ee2829328e0ae013c5Bc20DCbC
+
 ### Retired Contracts
 zs-UST StrategyV2: https://etherscan.io/address/0xCAd6d9D55E8B2Fa31F36E53d16CD0ACAB473223F 
 
