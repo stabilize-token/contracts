@@ -2,7 +2,7 @@
 Protocol that promotes stablecoins to stay on their peg with reward incentives. Stablecoins do not need to be tied to liquidity pools therefore limiting IL risk. Stabilize now features pools that earn interest on underlying assets.
 
 ## Find the contracts at:
-Governance Calculator: https://etherscan.io/address/0xaB1AB3d8cDF09E42d86d0c45646DE95337D2bf4A
+Governance Calculator: https://etherscan.io/address/0x4B578C3E5b5281B16FE3b035E03CBBd46B299e00
 
 Price Oracle: https://etherscan.io/address/0x81A363F3C747dbE947b43486Db4C6AA4DC70DDc4
 
