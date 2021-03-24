@@ -33,7 +33,7 @@ zs-BTC StrategyV4: https://etherscan.io/address/0x86FeDcc299d2E04264b168c37f18b7
 
 zs-FRAX: https://etherscan.io/address/0xD469BB16116443F389EfEF407D73EF7Ab0Ad96Ce
 
-zs-FRAX Strategy: https://etherscan.io/address/0x60953d814e81Bff9b5c8E9DF21Fb007892951295
+zs-FRAX Strategy: https://etherscan.io/address/0xD3db642AE29C5DC7bFcEBe67Fe3c8245d561d006
 
 zs-UST: https://etherscan.io/address/0x27E8d93D27f55130B1870d8EF2BCE847C08A8191
 
