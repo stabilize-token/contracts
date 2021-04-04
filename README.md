@@ -47,6 +47,10 @@ zs-XUSD2: https://etherscan.io/address/0xB5eB7528aCB55480b4221E498834FBc8cCBCd83
 
 zs-XUSD2 Strategy https://etherscan.io/address/0xd0abEC1bD8C0D173bcaCb6971DF07939433cfF07
 
+zs-FEI: https://etherscan.io/address/0x544b3FF2174016949e56C370808B2C05197b4aff
+
+zs-FEI Strategy https://etherscan.io/address/0x99Fd81DA4c322CbAfFC9549c728a2067D945504C
+
 ### Retired Contracts
 
 zs-XUSD: https://etherscan.io/address/0xc79376E4E60c4f83c933e0E0cD5B87Fb1c9848F7
