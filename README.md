@@ -51,6 +51,10 @@ zs-FEI: https://etherscan.io/address/0x544b3FF2174016949e56C370808B2C05197b4aff
 
 zs-FEI Strategy https://etherscan.io/address/0x99Fd81DA4c322CbAfFC9549c728a2067D945504C
 
+zs-tsBTC: https://etherscan.io/address/0x06C3467b2FcFc7431E92ecCE9dcb14D18bd518a2
+
+zs-tsBTC Strategy https://etherscan.io/address/0xbA8FD5460f7425197F6f38a51e41E4F812824024
+
 ### Retired Contracts
 
 zs-XUSD: https://etherscan.io/address/0xc79376E4E60c4f83c933e0E0cD5B87Fb1c9848F7
