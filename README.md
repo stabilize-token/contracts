@@ -18,8 +18,6 @@ Gas Treasury: https://etherscan.io/address/0xE05D2A6b97dce9B8e59ad074c2E4b6D51a2
 
 STBZ Staking Pool: https://etherscan.io/address/0x8c17bE13e034f7fa2a6496bC83B6010be6305204
 
-StabilizeTornadoProxyV2: https://etherscan.io/address/0xcA4530692F73110e5E15E2D07049bcFd5Adbe0de
-
 ### Strategy Contracts
 zs-USD: https://etherscan.io/address/0x8e769EAA31375D13a1247dE1e64987c28Bed987E
 
@@ -56,6 +54,8 @@ zs-tsBTC: https://etherscan.io/address/0x06C3467b2FcFc7431E92ecCE9dcb14D18bd518a
 zs-tsBTC Strategy https://etherscan.io/address/0xbA8FD5460f7425197F6f38a51e41E4F812824024
 
 ### Retired Contracts
+
+StabilizeTornadoProxyV2: https://etherscan.io/address/0xcA4530692F73110e5E15E2D07049bcFd5Adbe0de
 
 zs-XUSD: https://etherscan.io/address/0xc79376E4E60c4f83c933e0E0cD5B87Fb1c9848F7
 
