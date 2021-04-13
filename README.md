@@ -29,10 +29,6 @@ zs-BTC: https://etherscan.io/address/0x739D93f2b116E6aD754e173655c635Bd5D8d664c
 
 zs-BTC StrategyV4: https://etherscan.io/address/0x86FeDcc299d2E04264b168c37f18b7596320De2b
 
-zs-FRAX: https://etherscan.io/address/0xD469BB16116443F389EfEF407D73EF7Ab0Ad96Ce
-
-zs-FRAX Strategy: https://etherscan.io/address/0xD3db642AE29C5DC7bFcEBe67Fe3c8245d561d006
-
 zs-UST: https://etherscan.io/address/0x27E8d93D27f55130B1870d8EF2BCE847C08A8191
 
 zs-UST StrategyV3: https://etherscan.io/address/0x4d7Ef4fbC8eD5d30A3f0b8bA282A993Dd6843BfD
@@ -54,6 +50,10 @@ zs-tsBTC: https://etherscan.io/address/0x06C3467b2FcFc7431E92ecCE9dcb14D18bd518a
 zs-tsBTC Strategy https://etherscan.io/address/0xbA8FD5460f7425197F6f38a51e41E4F812824024
 
 ### Retired Contracts
+
+zs-FRAX: https://etherscan.io/address/0xD469BB16116443F389EfEF407D73EF7Ab0Ad96Ce
+
+zs-FRAX Strategy: https://etherscan.io/address/0xD3db642AE29C5DC7bFcEBe67Fe3c8245d561d006
 
 StabilizeTornadoProxyV2: https://etherscan.io/address/0xcA4530692F73110e5E15E2D07049bcFd5Adbe0de
 
