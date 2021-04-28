@@ -584,8 +584,8 @@ contract StabilizeStrategyAMPLArbV1 is Ownable {
     uint256 public minGain = 1e16; // Minimum amount of gain (0.01 coin) before buying WETH and splitting it
     uint256 public minWithdrawFee = 500; // 0.5% fee
     
-    uint256 public percentDepositor = 80000; // 1000 = 1%, depositors earn 70% of all gains
-    uint256 public percentExecutor = 10000; // 10000 = 10% of WETH goes to executor, 5% of total profit. This is on top of gas stipend
+    uint256 public percentDepositor = 80000; // 1000 = 1%, depositors earn 80% of all gains
+    uint256 public percentExecutor = 5000; // 5000 = 5% of WETH goes to executor, 1% of total profit. This is on top of gas stipend
     uint256 public percentStakers = 50000; // 50% of non-depositors WETH goes to stakers, can be changed
     
     // Ampleforth specific vars
@@ -594,10 +594,11 @@ contract StabilizeStrategyAMPLArbV1 is Ownable {
     uint256 private _tokenToSell; // This goes down with each trade 
     bool private _inExpansion; // Determines which token to sell
     uint256 public lastRebasePercent;
-    uint256 public amplSupplyChangeFactor = 50000; // This is a factor used by the strategy to determine how much ampl to sell in expansion
-    uint256 public usdcSupplyChangeFactor = 20000; // This is a factor used by the strategy to determine how much usdc to sell in contraction
-    uint256 public amplSellAmplificationFactor = 1; // The higher this number the more aggressive the sell during expansion
-    uint256 public usdcSellAmplificationFactor = 1; // The higher this number the more aggressive the buyback in contraction
+    uint256 public lastRebaseTime; // Needs to be less than 36 hours for rebase to cause sell action
+    uint256 public amplSupplyChangeFactor = 300000; // This is a factor used by the strategy to determine how much ampl to sell in expansion
+    uint256 public usdcSupplyChangeFactor = 400000; // This is a factor used by the strategy to determine how much usdc to sell in contraction
+    uint256 public amplSellAmplificationFactor = 40; // The higher this number the more aggressive the sell during expansion
+    uint256 public usdcSellAmplificationFactor = 60; // The higher this number the more aggressive the buyback in contraction
     
     // Token information
     // This strategy accepts ampl and usdc
@@ -630,6 +631,7 @@ contract StabilizeStrategyAMPLArbV1 is Ownable {
         if(lastAmplPrice >= 1e18){
             _inExpansion = true;
         }
+        lastRebaseTime = now;
     }
 
     // Initialization functions
@@ -712,6 +714,7 @@ contract StabilizeStrategyAMPLArbV1 is Ownable {
         
         // No trading is performed on deposit
         if(nonContract == true){ }
+        checkAndSwapTokens(address(0)); // Check for rebase only and update variables if needed
         lastActionBalance = balance();
         require(lastActionBalance <= maxPoolSize,"This strategy has reached its maximum balance");
     }
@@ -811,6 +814,11 @@ contract StabilizeStrategyAMPLArbV1 is Ownable {
     }
     
     function calculateTokenToSell() internal view returns (uint256, uint256, bool) {
+        // First determine if it hasn't been too long since the last rebase
+        if(now.sub(lastRebaseTime) > 36 hours){
+            // If so, do not sell
+            return (lastRebasePercent, 0, _inExpansion);
+        }
         // Calculate the amount of tokens to sell and whether we are in expansion or contraction
         // Returns rebase percent, token amount of sell and whether in expansion or contraction, 
         uint256 currentSupply = tokenList[0].token.totalSupply();
@@ -853,7 +861,7 @@ contract StabilizeStrategyAMPLArbV1 is Ownable {
             
             if(percentChange > 0){
                 // Our formula to calculate the percentage of wbtc sold is below
-                // -ampl_supply_change_percent * (ampl_supply_change_factor + price_change_percent * amplication_factor)
+                // -ampl_supply_change_percent * (usdc_supply_change_factor + price_change_percent * amplication_factor)
                 
                 // The faster the rise and the larger the negative rebase, the more that is bought
                 uint256 sellPercent = changedAmplPercent.mul(usdcSupplyChangeFactor.add(uint256(percentChange).mul(usdcSellAmplificationFactor))).div(DIVISION_FACTOR);
@@ -952,6 +960,7 @@ contract StabilizeStrategyAMPLArbV1 is Ownable {
             (lastRebasePercent, _tokenToSell, _inExpansion) = calculateTokenToSell();
             lastAmplTotalSupply = currentSupply;
             lastAmplPrice = getAmplUSDPrice();
+            lastRebaseTime = now;
         }
         if(_executor == address(0)){ return; } // No executor running this code, return
         
@@ -1063,13 +1072,9 @@ contract StabilizeStrategyAMPLArbV1 is Ownable {
         uint256 currentSupply = tokenList[0].token.totalSupply();
         if(currentSupply != lastAmplTotalSupply){
             // A rebase has occurred, calculate what the withdraw fee will be
-            (uint256 rebasePercent, , bool expansion) = calculateTokenToSell();
-            if(expansion == false){
-                if(rebasePercent > minWithdrawFee){
-                    return rebasePercent;
-                }else{
-                    return minWithdrawFee;
-                }
+            (uint256 rebasePercent, , ) = calculateTokenToSell();
+            if(rebasePercent > minWithdrawFee){
+                return rebasePercent;
             }else{
                 return minWithdrawFee;
             }
