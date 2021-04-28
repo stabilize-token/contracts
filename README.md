@@ -47,7 +47,7 @@ zs-tsBTC Strategy: https://etherscan.io/address/0xbA8FD5460f7425197F6f38a51e41E4
 
 zs-AMPL: https://etherscan.io/address/0x78172170DbD084D5EA8c24c60885C755Fc8EFA62
 
-zs-AMPL Strategy: https://etherscan.io/address/0xea2796d73E24591e61b27B21C13c4DEb01A2CC3D
+zs-AMPL Strategy: https://etherscan.io/address/0x8004Ea2db8D91489E261FAC0819992596Cf69077
 
 ### Retired Contracts
 
