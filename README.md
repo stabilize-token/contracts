@@ -39,7 +39,7 @@ zs-XUSD2 Strategy https://etherscan.io/address/0xd0abEC1bD8C0D173bcaCb6971DF0793
 
 zs-FEI: https://etherscan.io/address/0x544b3FF2174016949e56C370808B2C05197b4aff
 
-zs-FEI Strategy https://etherscan.io/address/0x99Fd81DA4c322CbAfFC9549c728a2067D945504C
+zs-FEI StrategyV2: https://etherscan.io/address/0x987c2661d7f6928538Aa1BF66D48d48539E6c13F
 
 zs-tsBTC: https://etherscan.io/address/0x06C3467b2FcFc7431E92ecCE9dcb14D18bd518a2
 
@@ -50,6 +50,8 @@ zs-AMPL: https://etherscan.io/address/0x78172170DbD084D5EA8c24c60885C755Fc8EFA62
 zs-AMPL Strategy: https://etherscan.io/address/0x8004Ea2db8D91489E261FAC0819992596Cf69077
 
 ### Retired Contracts
+
+zs-FEI StrategyV1: https://etherscan.io/address/0x99Fd81DA4c322CbAfFC9549c728a2067D945504C
 
 zs-BTC: https://etherscan.io/address/0x739D93f2b116E6aD754e173655c635Bd5D8d664c
 
