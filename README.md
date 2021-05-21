@@ -49,6 +49,8 @@ zs-AMPL: https://etherscan.io/address/0x78172170DbD084D5EA8c24c60885C755Fc8EFA62
 
 zs-AMPL Strategy: https://etherscan.io/address/0x8004Ea2db8D91489E261FAC0819992596Cf69077
 
+FlashManager Strategy: https://etherscan.io/address/0x9557ef0975e8e921c822a8b81032e695d7ff328c#code
+
 ### Retired Contracts
 
 zs-FEI StrategyV1: https://etherscan.io/address/0x99Fd81DA4c322CbAfFC9549c728a2067D945504C
