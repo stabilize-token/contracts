@@ -21,7 +21,7 @@ STBZ Staking Pool: https://etherscan.io/address/0x8c17bE13e034f7fa2a6496bC83B601
 ### Strategy Contracts
 zs-USD: https://etherscan.io/address/0x8e769EAA31375D13a1247dE1e64987c28Bed987E
 
-zs-USD StrategyV4: https://etherscan.io/address/0x5aA476685133f1dBfad5D6A02d991f94d33322D0
+zs-USD StrategyV5: https://etherscan.io/address/0x6EBa59a25F1Fe1C987E904884c199B541499672c
 
 zs-USD InterestVault: https://etherscan.io/address/0x8319006f50D11C9400E7C446c9F8192a6c27da6e
 
@@ -52,6 +52,8 @@ zs-AMPL Strategy: https://etherscan.io/address/0x8004Ea2db8D91489E261FAC08199925
 FlashManager Strategy: https://etherscan.io/address/0x9557ef0975e8e921c822a8b81032e695d7ff328c
 
 ### Retired Contracts
+
+zs-USD StrategyV4: https://etherscan.io/address/0x5aA476685133f1dBfad5D6A02d991f94d33322D0
 
 zs-FEI StrategyV1: https://etherscan.io/address/0x99Fd81DA4c322CbAfFC9549c728a2067D945504C
 
